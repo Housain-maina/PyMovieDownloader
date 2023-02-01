@@ -31,13 +31,16 @@ class Downloader:
                     + " skipping download..."
                 )
                 return
+            file_size = self.driver.find_element(
+                By.XPATH, "//span[@class='size-number']"
+            ).get_attribute("innerHTML")
             download_btn = self.driver.find_element(
                 By.XPATH, "//button[@class='btn shadow-sm download mt-3 mt-sm-0']"
             )
             self.driver.execute_script("arguments[0].click();", download_btn)
             file_path = self.download_path + subtitle_title
             while not os.path.exists(file_path):
-                self.logger.info(f"downloading {subtitle_title}")
+                self.logger.info(f"downloading {subtitle_title} with file size:{file_size}")
                 time.sleep(5)
             if os.path.isfile(file_path):
                 self.logger.info("subtitle Downloaded at " + file_path)
@@ -68,13 +71,16 @@ class Downloader:
                     + " skipping download..."
                 )
                 return
+            file_size = self.driver.find_element(
+                By.XPATH, "//span[@class='size-number']"
+            ).get_attribute("innerHTML")
             download_btn = self.driver.find_element(
                 By.XPATH, "//button[@class='btn shadow-sm download mt-3 mt-sm-0']"
             )
             self.driver.execute_script("arguments[0].click();", download_btn)
             file_path = self.download_path + video_title
             while not os.path.exists(file_path):
-                self.logger.info(f"downloading {video_title}")
+                self.logger.info(f"downloading {video_title} with file size:{file_size}")
                 time.sleep(5)
             if os.path.isfile(file_path):
                 self.logger.info("video downloaded at " + file_path)
