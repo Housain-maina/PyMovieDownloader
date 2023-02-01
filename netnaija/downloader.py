@@ -112,3 +112,8 @@ class Downloader:
                 raise ValueError("%s isn't a file!" % file_path)
         except NoSuchElementException:
             self.logger.warning("invalid video url...")
+
+    def download_videos(self, urls, with_subtitles=False, create_folders=False):
+        for url in urls:
+            self.download_video(url, with_subtitle=with_subtitles, create_folder=create_folders)
+        return
