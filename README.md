@@ -1,2 +1,2 @@
-# netnaija-movie-downloader
-Python script that automates the download of movies from https://www.thenetnaija.net
+# MoviePy
+Python app that automates the downloading of movies from popular movies download sites.
