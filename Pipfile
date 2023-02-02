@@ -5,8 +5,8 @@ name = "pypi"
 
 [packages]
 selenium = "*"
-black = "*"
 webdriver-manager = "*"
+black = {extras = ["d"], version = "*"}
 
 [dev-packages]
 
