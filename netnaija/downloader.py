@@ -1,9 +1,9 @@
 import time
 import os.path
-import shutil
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import NoSuchElementException
 from utils.logger import Logger
+from utils.common import move_file
 
 
 class Downloader:
@@ -24,32 +24,28 @@ class Downloader:
                 "innerText"
             )
             if os.path.isfile(self.download_path + subtitle_title):
-                self.logger.info(
-                    "subtitle already exists at "
-                    + self.download_path
-                    + subtitle_title
-                    + " skipping download..."
-                )
-                return
-            file_size = self.driver.find_element(
-                By.XPATH, "//span[@class='size-number']"
-            ).get_attribute("innerHTML")
-            download_btn = self.driver.find_element(
-                By.XPATH, "//button[@class='btn shadow-sm download mt-3 mt-sm-0']"
-            )
-            self.driver.execute_script("arguments[0].click();", download_btn)
-            file_path = self.download_path + subtitle_title
-            while not os.path.exists(file_path):
-                self.logger.info(f"downloading {subtitle_title} with file size:{file_size}")
-                time.sleep(5)
-            if os.path.isfile(file_path):
-                self.logger.info("subtitle Downloaded at " + file_path)
+                self.logger.info("subtitle already exists, skipping download...")
             else:
-                raise ValueError("%s isn't a file!" % file_path)
+                file_size = self.driver.find_element(
+                    By.XPATH, "//span[@class='size-number']"
+                ).get_attribute("innerHTML")
+                download_btn = self.driver.find_element(
+                    By.XPATH, "//button[@class='btn shadow-sm download mt-3 mt-sm-0']"
+                )
+                self.driver.execute_script("arguments[0].click();", download_btn)
+                file_path = self.download_path + subtitle_title
+                while not os.path.exists(file_path):
+                    self.logger.info(
+                        f"downloading {subtitle_title} with file size:{file_size}"
+                    )
+                    time.sleep(5)
+                self.logger.info("subtitle Downloaded at " + file_path)
         except NoSuchElementException:
-            self.logger.warning("invalid subtitle url...")
+            self.logger.warning("invalid url...")
 
-    def download_video(self, url, with_subtitle=False, create_folder=False):
+    def download_video(
+        self, url, with_subtitle=False, create_folder=False, move_to=None
+    ):
         try:
             if with_subtitle:
                 self.download_subtitle(url)
@@ -59,61 +55,79 @@ class Downloader:
                 By.XPATH, "//a[@title='Download Video']"
             )
             self.driver.execute_script("arguments[0].click();", video_element)
-            time.sleep(5)
+            time.sleep(3)
             video_title = self.driver.find_element(By.TAG_NAME, "h1").get_attribute(
                 "innerText"
             )
             if os.path.isfile(self.download_path + video_title):
-                self.logger.info(
-                    "video already exists at "
-                    + self.download_path
-                    + video_title
-                    + " skipping download..."
-                )
-                return
-            file_size = self.driver.find_element(
-                By.XPATH, "//span[@class='size-number']"
-            ).get_attribute("innerHTML")
-            download_btn = self.driver.find_element(
-                By.XPATH, "//button[@class='btn shadow-sm download mt-3 mt-sm-0']"
-            )
-            self.driver.execute_script("arguments[0].click();", download_btn)
-            file_path = self.download_path + video_title
-            while not os.path.exists(file_path):
-                self.logger.info(f"downloading {video_title} with file size:{file_size}")
-                time.sleep(5)
-            if os.path.isfile(file_path):
-                self.logger.info("video downloaded at " + file_path)
-                if create_folder:
-                    try:
-                        folder_name = (
-                            "".join(video_title.split("(NetNaija.com)")[0])
-                            + "(NetNaija.com)"
-                        )
-                        os.mkdir(self.download_path + folder_name)
-                        self.logger.info(
-                            f"moving files {self.download_path}{folder_name}"
-                        )
-                        if with_subtitle:
-                            shutil.move(
-                                f"{self.download_path}{folder_name}.srt",
-                                f"{self.download_path}{folder_name}/{folder_name}.srt",
-                            )
-                        shutil.move(
-                            file_path,
-                            f"{self.download_path}{folder_name}/{video_title}",
-                        )
-                        self.logger.info(
-                            f"files moved to {self.download_path}{folder_name}"
-                        )
-                    except Exception as e:
-                        self.logger.exception(e)
+                self.logger.info("video already exists, skipping download...")
             else:
-                raise ValueError("%s isn't a file!" % file_path)
-        except NoSuchElementException:
-            self.logger.warning("invalid video url...")
+                file_size = self.driver.find_element(
+                    By.XPATH, "//span[@class='size-number']"
+                ).get_attribute("innerHTML")
+                download_btn = self.driver.find_element(
+                    By.XPATH, "//button[@class='btn shadow-sm download mt-3 mt-sm-0']"
+                )
+                self.driver.execute_script("arguments[0].click();", download_btn)
+                file_path = self.download_path + video_title
+                while not os.path.exists(file_path):
+                    self.logger.info(
+                        f"downloading {video_title} with file size:{file_size}"
+                    )
+                    time.sleep(5)
+                self.logger.info("video downloaded at " + file_path)
+            if os.path.isfile(self.download_path + video_title):
+                folder_name = (
+                    "".join(video_title.split("(NetNaija.com)")[0]) + "(NetNaija.com)"
+                )
+                if with_subtitle and create_folder and move_to:
+                    move_file(
+                        origin_folder=self.download_path,
+                        destination_folder=move_to + folder_name + "/",
+                        file_name=folder_name + ".srt",
+                    )
+                    move_file(
+                        origin_folder=self.download_path,
+                        destination_folder=move_to + folder_name + "/",
+                        file_name=video_title,
+                    )
+                elif with_subtitle and create_folder:
+                    move_file(
+                        origin_folder=self.download_path,
+                        destination_folder=self.download_path + folder_name + "/",
+                        file_name=folder_name + ".srt",
+                    )
+                    move_file(
+                        origin_folder=self.download_path,
+                        destination_folder=self.download_path + folder_name + "/",
+                        file_name=video_title,
+                    )
+                elif with_subtitle and move_to:
+                    move_file(
+                        origin_folder=self.download_path,
+                        destination_folder=move_to,
+                        file_name=folder_name + ".srt",
+                    )
+                    move_file(
+                        origin_folder=self.download_path,
+                        destination_folder=move_to,
+                        file_name=video_title,
+                    )
 
-    def download_videos(self, urls, with_subtitles=False, create_folders=False):
+            else:
+                raise ValueError("%s isn't a file!" % self.download_path + video_title)
+        except NoSuchElementException:
+            self.logger.warning("invalid url...")
+
+    def download_videos(
+        self, urls, with_subtitles=False, create_folders=False, move_to=None
+    ):
+        self.logger.info(f"downloading {len(urls)} videos...")
         for url in urls:
-            self.download_video(url, with_subtitle=with_subtitles, create_folder=create_folders)
+            self.download_video(
+                url,
+                with_subtitle=with_subtitles,
+                create_folder=create_folders,
+                move_to=move_to,
+            )
         return
