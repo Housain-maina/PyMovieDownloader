@@ -131,3 +131,28 @@ class Downloader:
                 move_to=move_to,
             )
         return
+
+    def download_season(
+        self, url, with_subtitles=False, create_folder=False, move_to=None
+    ):
+        try:
+            self.driver.get(url)
+            season_title = self.driver.find_element(By.TAG_NAME, "h1").get_attribute(
+                "innerText"
+            )
+            self.logger.info(f"downloading {season_title}...")
+            episodes = self.driver.find_elements(By.XPATH, "//a[@class='anchor']")
+            urls = [episode.get_attribute("href") for episode in episodes]
+            self.logger.info(f"found {len(urls)} episodes...")
+            if move_to and create_folder:
+                move_to = move_to + season_title + "/"
+            elif not move_to and create_folder:
+                move_to = self.download_path + season_title + "/"
+            self.download_videos(
+                urls,
+                with_subtitles=with_subtitles,
+                move_to=move_to,
+            )
+            return
+        except NoSuchElementException:
+            self.logger.warning("invalid url...")
