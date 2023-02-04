@@ -168,3 +168,33 @@ class Downloader:
             return
         except NoSuchElementException:
             self.logger.warning("invalid url...")
+
+    def download_series(self, url, with_subtitles=False, create_folder=False):
+        try:
+            self.driver.get(url)
+            series_title = self.driver.find_element(By.TAG_NAME, "h1").get_attribute(
+                "innerText"
+            )
+            self.logger.info(f"downloading {series_title}...")
+            seasons_elements = self.driver.find_elements(
+                By.XPATH,
+                "//article[@class='vs-many']/div[@class='vs-one']/h3[@class='title']/a",
+            )
+            self.logger.info(f"found {len(seasons_elements)} season(s)...")
+            for season_element in seasons_elements:
+                if create_folder:
+                    self.download_season(
+                        url=season_element.get_attribute("href"),
+                        with_subtitles=with_subtitles,
+                        create_folder=True,
+                        move_to=self.download_path + series_title + "/",
+                    )
+                else:
+                    self.download_season(
+                        url=season_element.get_attribute("href"),
+                        with_subtitles=with_subtitles,
+                        create_folder=True,
+                    )
+
+        except NoSuchElementException:
+            self.logger.warning("invalid url...")
