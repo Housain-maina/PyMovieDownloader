@@ -113,6 +113,18 @@ class Downloader:
                         destination_folder=move_to,
                         file_name=video_title,
                     )
+                elif create_folder:
+                    move_file(
+                        origin_folder=self.download_path,
+                        destination_folder=self.download_path + folder_name + "/",
+                        file_name=video_title,
+                    )
+                elif move_to:
+                    move_file(
+                        origin_folder=self.download_path,
+                        destination_folder=move_to,
+                        file_name=video_title,
+                    )
 
             else:
                 raise ValueError("%s isn't a file!" % self.download_path + video_title)
