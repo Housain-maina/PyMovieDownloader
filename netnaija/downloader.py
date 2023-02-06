@@ -181,17 +181,18 @@ class Downloader:
                 "//article[@class='vs-many']/div[@class='vs-one']/h3[@class='title']/a",
             )
             self.logger.info(f"found {len(seasons_elements)} season(s)...")
-            for season_element in seasons_elements:
+            seasons_urls = [season.get_attribute("href") for season in seasons_elements]
+            for season_url in seasons_urls:
                 if create_folder:
                     self.download_season(
-                        url=season_element.get_attribute("href"),
+                        url=season_url,
                         with_subtitles=with_subtitles,
                         create_folder=True,
                         move_to=self.download_path + series_title + "/",
                     )
                 else:
                     self.download_season(
-                        url=season_element.get_attribute("href"),
+                        url=season_url,
                         with_subtitles=with_subtitles,
                         create_folder=True,
                     )
