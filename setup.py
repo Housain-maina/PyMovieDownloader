@@ -25,15 +25,10 @@ with open("requirements.txt") as f:
     dependencies = f.read().splitlines()
 
 documentation = readall("README.md")
-metadata = dict(
-    re.findall(
-        r"""__([a-z]+)__ = "([^"]+)""", readall("pymoviedownloader", "__init__.py")
-    )
-)
 
 setup(
     name="pymoviedownloader",
-    version=metadata["version"],
+    version="0.0.1",
     description=summary,
     long_description=documentation,
     long_description_content_type="text/markdown",
