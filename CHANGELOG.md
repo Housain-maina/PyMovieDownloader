@@ -14,7 +14,7 @@ _The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 ## [0.0.2] - 2023-02-08
 
 ### Changed
-- Moved all modules to new pymoviedownloader package.
+- Moved all modules to new pymoviedownloader module.
 
 
 ## [0.0.1] - 2023-02-08
