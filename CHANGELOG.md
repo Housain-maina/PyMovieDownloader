@@ -11,6 +11,12 @@ _The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added support for downloading from [Nkiri](https://nkiri.com/).
 
 
+## [0.0.2] - 2023-02-08
+
+### Changed
+- Moved all modules to new pymoviedownloader package.
+
+
 ## [0.0.1] - 2023-02-08
 
 ### Added

@@ -28,7 +28,7 @@ documentation = readall("README.md")
 
 setup(
     name="pymoviedownloader",
-    version="0.0.1",
+    version="0.0.2",
     description=summary,
     long_description=documentation,
     long_description_content_type="text/markdown",
