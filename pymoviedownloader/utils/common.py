@@ -1,6 +1,6 @@
 import os
 import shutil
-from utils.logger import Logger
+from pymoviedownloader.utils.logger import Logger
 
 
 def move_file(origin_folder=None, destination_folder=None, file_name=None):

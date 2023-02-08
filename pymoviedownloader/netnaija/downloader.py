@@ -2,8 +2,8 @@ import time
 import os.path
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import NoSuchElementException
-from utils.logger import Logger
-from utils.common import move_file
+from pymoviedownloader.utils.logger import Logger
+from pymoviedownloader.utils.common import move_file
 
 
 class Downloader:
